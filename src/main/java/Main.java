@@ -148,6 +148,7 @@ public class Main extends JFrame implements ActionListener {
         m4 = new JMenuItem("Black and White");
         m5 = new JMenuItem("RGB matrix");
         m6 = new JMenuItem("Histogram");
+        m7 = new JMenuItem("Change pixels");
 
         // add menu items to menu
         x.add(m1);
@@ -156,6 +157,7 @@ public class Main extends JFrame implements ActionListener {
         x.add(m4);
         x.add(m5);
         x.add(m6);
+            x.add(m7);
 
         // add menu to menu bar
         mb.add(x);
@@ -169,9 +171,14 @@ public class Main extends JFrame implements ActionListener {
         m4.addActionListener(m);
         m5.addActionListener(m);
         m6.addActionListener(m);
+        m7.addActionListener(m);
 
         frame.setLayout(new FlowLayout());
-        frame.setSize(200, 300);
+            Toolkit tk=Toolkit.getDefaultToolkit();
+            Dimension screenSize = tk.getScreenSize();
+            frame.setSize(screenSize.width,screenSize.height);
+
+//        frame.setSize(200, 300);
         lbl.setIcon(icon);
         frame.add(lbl);
         frame.setVisible(true);
@@ -286,6 +293,19 @@ public class Main extends JFrame implements ActionListener {
                 new Histogram().display();
             });
 
+        }else if (s.equals("Change pixels")){
+
+            Image image = originalImg.getScaledInstance(200, 100, Image.SCALE_DEFAULT);
+
+//            lbl.removeAll();
+
+            frame.remove(lbl);
+            lbl = new JLabel();
+
+            ImageIcon icon = new ImageIcon(image);
+            lbl.setIcon(icon);
+            frame.add(lbl);
+            SwingUtilities.updateComponentTreeUI(frame);
         }
     }
 
