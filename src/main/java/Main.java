@@ -295,17 +295,80 @@ public class Main extends JFrame implements ActionListener {
 
         }else if (s.equals("Change pixels")){
 
-            Image image = originalImg.getScaledInstance(200, 100, Image.SCALE_DEFAULT);
+            JFrame frame = new JFrame();
+            frame.setSize(400, 400);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            Container container = frame.getContentPane();
+            container.setLayout(new FlowLayout());
+
+            JTextField textField = new JTextField();
+            JTextField textField2 = new JTextField();
+            textField.setPreferredSize(new Dimension(150, 25));
+            textField2.setPreferredSize(new Dimension(150, 25));
+
+            JLabel label = new JLabel("WIDTH x HEIGHT");
+
+            JButton okButton = new JButton("OK");
+            okButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String input = textField.getText();
+                    Integer height = Integer.valueOf(input);
+
+                    String input2 = textField2.getText();
+                    Integer width = Integer.valueOf(input2);
+//                    System.out.println("Input: " + input);
+//
+//                    label.setText(input);
+
+
+
+                    Image image = originalImg.getScaledInstance(width, height, Image.SCALE_DEFAULT);
 
 //            lbl.removeAll();
 
-            frame.remove(lbl);
-            lbl = new JLabel();
+                    frame.remove(lbl);
+                    lbl = new JLabel();
 
-            ImageIcon icon = new ImageIcon(image);
-            lbl.setIcon(icon);
-            frame.add(lbl);
-            SwingUtilities.updateComponentTreeUI(frame);
+                    ImageIcon icon = new ImageIcon(image);
+                    lbl.setIcon(icon);
+                    frame.add(lbl);
+                    SwingUtilities.updateComponentTreeUI(frame);
+
+                }
+            });
+
+            container.add(textField);
+            container.add(okButton);
+            container.add(label);
+
+            frame.setVisible(true);
+
+
+
+
+
+
+
+
+
+
+
+
+
+//            Image image = originalImg.getScaledInstance(200, 100, Image.SCALE_DEFAULT);
+//
+////            lbl.removeAll();
+//
+//            frame.remove(lbl);
+//            lbl = new JLabel();
+//
+//            ImageIcon icon = new ImageIcon(image);
+//            lbl.setIcon(icon);
+//            frame.add(lbl);
+//            SwingUtilities.updateComponentTreeUI(frame);
         }
     }
 
