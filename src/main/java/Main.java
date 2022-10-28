@@ -224,18 +224,78 @@ public class Main extends JFrame implements ActionListener {
         } else if (s.equals("Crop")) {
 
             //TODO set getSumImage -> User can choose size of the picture
-            BufferedImage SubImg
-                    = originalImg.getSubimage(100, 100, 100, 100);
+//            BufferedImage SubImg
+//                    = originalImg.getSubimage(100, 100, 100, 100);
+//
+//            lbl.removeAll();
+//
+//            frame.remove(lbl);
+//
+//            ImageIcon icon = new ImageIcon(SubImg);
+//            lbl.setIcon(icon);
+//            frame.add(lbl);
+//            frame.setVisible(true);
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            lbl.removeAll();
 
-            frame.remove(lbl);
+            ////TODO
 
-            ImageIcon icon = new ImageIcon(SubImg);
-            lbl.setIcon(icon);
-            frame.add(lbl);
-            frame.setVisible(true);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            JFrame newframe = new JFrame();
+            newframe.setSize(400, 400);
+            newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            Container container = newframe.getContentPane();
+            container.setLayout(new FlowLayout());
+
+            JTextField x = new JTextField();
+            JTextField y = new JTextField();
+            JTextField w = new JTextField();
+            JTextField h = new JTextField();
+
+            x.setPreferredSize(new Dimension(50, 25));
+            y.setPreferredSize(new Dimension(50, 25));
+            w.setPreferredSize(new Dimension(50, 25));
+            h.setPreferredSize(new Dimension(50, 25));
+
+
+
+            JLabel label = new JLabel("X x Y x W x H");
+
+            JButton okButton = new JButton("OK");
+            okButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String xString = x.getText();
+                    Integer x = Integer.valueOf(xString);
+                    String yString = y.getText();
+                    Integer y = Integer.valueOf(yString);
+                    String wString = w.getText();
+                    Integer w = Integer.valueOf(wString);
+                    String hString = h.getText();
+                    Integer h = Integer.valueOf(hString);
+
+                    BufferedImage SubImg
+                            = originalImg.getSubimage(x, y, w, h);
+
+                    ImageIcon icon = new ImageIcon(SubImg);
+                    lbl.setIcon(icon);
+                    newframe.add(lbl);
+                    SwingUtilities.updateComponentTreeUI(newframe);
+                }
+            });
+
+            container.add(x);
+            container.add(y);
+            container.add(w);
+            container.add(h);
+            container.add(okButton);
+            container.add(label);
+
+            newframe.setVisible(true);
+
+
+
         } else if (s.equals("Brightnes and contrast")) {
 
             RescaleOp rescaleOp = new RescaleOp(1.2f, 15, null);
@@ -295,17 +355,20 @@ public class Main extends JFrame implements ActionListener {
 
         }else if (s.equals("Change pixels")){
 
-            JFrame frame = new JFrame();
-            frame.setSize(400, 400);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            JFrame newframe = new JFrame();
+            newframe.setSize(400, 400);
+            newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            Container container = frame.getContentPane();
+            Container container = newframe.getContentPane();
             container.setLayout(new FlowLayout());
 
             JTextField textField = new JTextField();
             JTextField textField2 = new JTextField();
             textField.setPreferredSize(new Dimension(150, 25));
+
             textField2.setPreferredSize(new Dimension(150, 25));
+
+            newframe.add(textField2);
 
             JLabel label = new JLabel("WIDTH x HEIGHT");
 
@@ -315,27 +378,20 @@ public class Main extends JFrame implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String input = textField.getText();
+
                     Integer height = Integer.valueOf(input);
 
                     String input2 = textField2.getText();
                     Integer width = Integer.valueOf(input2);
-//                    System.out.println("Input: " + input);
-//
-//                    label.setText(input);
-
-
 
                     Image image = originalImg.getScaledInstance(width, height, Image.SCALE_DEFAULT);
 
-//            lbl.removeAll();
-
-                    frame.remove(lbl);
                     lbl = new JLabel();
 
                     ImageIcon icon = new ImageIcon(image);
                     lbl.setIcon(icon);
-                    frame.add(lbl);
-                    SwingUtilities.updateComponentTreeUI(frame);
+                    newframe.add(lbl);
+                    SwingUtilities.updateComponentTreeUI(newframe);
 
                 }
             });
@@ -344,7 +400,7 @@ public class Main extends JFrame implements ActionListener {
             container.add(okButton);
             container.add(label);
 
-            frame.setVisible(true);
+            newframe.setVisible(true);
 
 
 
