@@ -32,7 +32,7 @@ public class Main extends JFrame implements ActionListener {
     static JMenu x;
 
     // Menu items
-    static JMenuItem m1, m2, m3, m4, m5, m6, m7, m8;
+    static JMenuItem m1, m2, m3, m4, m5, m6, m7, m8, m9, m10;
     private static BufferedImage originalImg;
     private static JFrame frame;
     private static JLabel lbl = new JLabel();
@@ -121,9 +121,7 @@ public class Main extends JFrame implements ActionListener {
     }
 
 
-
-
-        public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         // create an object of the class
         Main m = new Main();
@@ -149,6 +147,8 @@ public class Main extends JFrame implements ActionListener {
         m5 = new JMenuItem("RGB matrix");
         m6 = new JMenuItem("Histogram");
         m7 = new JMenuItem("Change pixels");
+        m8 = new JMenuItem("2 photografies");
+        m9 = new JMenuItem("Whitest");
 
         // add menu items to menu
         x.add(m1);
@@ -157,7 +157,9 @@ public class Main extends JFrame implements ActionListener {
         x.add(m4);
         x.add(m5);
         x.add(m6);
-            x.add(m7);
+        x.add(m7);
+        x.add(m8);
+        x.add(m9);
 
         // add menu to menu bar
         mb.add(x);
@@ -172,11 +174,13 @@ public class Main extends JFrame implements ActionListener {
         m5.addActionListener(m);
         m6.addActionListener(m);
         m7.addActionListener(m);
+        m8.addActionListener(m);
+        m9.addActionListener(m);
 
         frame.setLayout(new FlowLayout());
-            Toolkit tk=Toolkit.getDefaultToolkit();
-            Dimension screenSize = tk.getScreenSize();
-            frame.setSize(screenSize.width,screenSize.height);
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Dimension screenSize = tk.getScreenSize();
+        frame.setSize(screenSize.width, screenSize.height);
 
 //        frame.setSize(200, 300);
         lbl.setIcon(icon);
@@ -223,22 +227,6 @@ public class Main extends JFrame implements ActionListener {
 
         } else if (s.equals("Crop")) {
 
-            //TODO set getSumImage -> User can choose size of the picture
-//            BufferedImage SubImg
-//                    = originalImg.getSubimage(100, 100, 100, 100);
-//
-//            lbl.removeAll();
-//
-//            frame.remove(lbl);
-//
-//            ImageIcon icon = new ImageIcon(SubImg);
-//            lbl.setIcon(icon);
-//            frame.add(lbl);
-//            frame.setVisible(true);
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-            ////TODO
 
             JFrame newframe = new JFrame();
             newframe.setSize(400, 400);
@@ -256,8 +244,6 @@ public class Main extends JFrame implements ActionListener {
             y.setPreferredSize(new Dimension(50, 25));
             w.setPreferredSize(new Dimension(50, 25));
             h.setPreferredSize(new Dimension(50, 25));
-
-
 
             JLabel label = new JLabel("X x Y x W x H");
 
@@ -294,8 +280,6 @@ public class Main extends JFrame implements ActionListener {
 
             newframe.setVisible(true);
 
-
-
         } else if (s.equals("Brightnes and contrast")) {
 
             RescaleOp rescaleOp = new RescaleOp(1.2f, 15, null);
@@ -306,6 +290,7 @@ public class Main extends JFrame implements ActionListener {
             frame.add(lbl);
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         } else if (s.equals("Black and White")) {
 
             ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
@@ -317,10 +302,11 @@ public class Main extends JFrame implements ActionListener {
             frame.add(lbl);
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         } else if (s.equals("RGB matrix")) {
 
             BufferedImage SubImg
-                    = originalImg.getSubimage(50, 50, 50, 50);
+                    = originalImg.getSubimage(50, 50, 20, 20);
 
 
             int[][] R = new int[SubImg.getWidth()][SubImg.getHeight()];
@@ -328,7 +314,7 @@ public class Main extends JFrame implements ActionListener {
             int[][] B = new int[SubImg.getWidth()][SubImg.getHeight()];
 
             for (int r = 0; r < SubImg.getWidth(); r++) {
-                System.out.println("--[R]  [G]  [B] ------");
+                System.out.println("  [R  G  B] ");
 
                 for (int c = 0; c < SubImg.getHeight(); c++) {
                     //Uses the Java color class to do the conversion from int to RGB
@@ -342,18 +328,21 @@ public class Main extends JFrame implements ActionListener {
 
                     SubImg.setRGB(r, c, Color.RED.getRGB());
                     ImageIcon icon = new ImageIcon(originalImg);
-                    lbl = new JLabel();
                     lbl.setIcon(icon);
                     frame.add(lbl);
                 }
                 System.out.println("-----------------------");
+                SwingUtilities.updateComponentTreeUI(frame);
             }
+
+
         } else if (s.equals("Histogram")) {
+
             EventQueue.invokeLater(() -> {
                 new Histogram().display();
             });
 
-        }else if (s.equals("Change pixels")){
+        } else if (s.equals("Change pixels")) {
 
             JFrame newframe = new JFrame();
             newframe.setSize(400, 400);
@@ -392,7 +381,6 @@ public class Main extends JFrame implements ActionListener {
                     lbl.setIcon(icon);
                     newframe.add(lbl);
                     SwingUtilities.updateComponentTreeUI(newframe);
-
                 }
             });
 
@@ -401,34 +389,60 @@ public class Main extends JFrame implements ActionListener {
             container.add(label);
 
             newframe.setVisible(true);
+        }else if (s.equals("2 photografies")){
+            
+            BufferedImage image = null;
+            Image original = originalImg.getScaledInstance(500, 300, Image.SCALE_DEFAULT);
+            JLabel label = new JLabel();
 
+            JFrame newframe = new JFrame();
+            newframe.setLayout(new FlowLayout());
+            Toolkit tk = Toolkit.getDefaultToolkit();
+            Dimension screenSize = tk.getScreenSize();
+            newframe.setSize(screenSize.width, screenSize.height);
+            newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+            try {
+                image = ImageIO.read(
+                        new File("src/main/resources/black.jpg"));
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
 
+            ImageIcon icon = new ImageIcon(image);
+            label.setIcon(icon);
+            newframe.add(label);
+            newframe.setVisible(true);
 
+            Graphics g = image.getGraphics();
+            g.drawImage(original, 100,100,null);
+            g.dispose();
+            label.repaint();
 
+        } else if (s.equals("Whitest")){
 
+            JFrame newframe = new JFrame();
+            JLabel label = new JLabel();
+            newframe.setLayout(new FlowLayout());
+            Toolkit tk = Toolkit.getDefaultToolkit();
+            Dimension screenSize = tk.getScreenSize();
+            newframe.setSize(screenSize.width, screenSize.height);
+            newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+            BufferedImage whitest = new BufferedImage(
+                    originalImg.getWidth(),
+                    originalImg.getHeight(),
+                    BufferedImage.TYPE_BYTE_BINARY);
 
+            Graphics2D graphics = whitest.createGraphics();
+            graphics.drawImage(originalImg, 0, 0, null);
 
-
-
-
-
-//            Image image = originalImg.getScaledInstance(200, 100, Image.SCALE_DEFAULT);
-//
-////            lbl.removeAll();
-//
-//            frame.remove(lbl);
-//            lbl = new JLabel();
-//
-//            ImageIcon icon = new ImageIcon(image);
-//            lbl.setIcon(icon);
-//            frame.add(lbl);
-//            SwingUtilities.updateComponentTreeUI(frame);
+            ImageIcon icon = new ImageIcon(whitest);
+            label.setIcon(icon);
+            newframe.add(label);
+            newframe.setVisible(true);
         }
     }
-
-
 
 
 }
