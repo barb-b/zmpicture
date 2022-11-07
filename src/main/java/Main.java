@@ -21,9 +21,12 @@ import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 
 public class Main extends JFrame implements ActionListener {
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     // menubar
     static JMenuBar mb;
@@ -142,13 +145,13 @@ public class Main extends JFrame implements ActionListener {
         // create menuitems
         m1 = new JMenuItem("Rotate");
         m2 = new JMenuItem("Crop");
-        m3 = new JMenuItem("Brightnes and contrast");
+        m3 = new JMenuItem("Brightness and contrast");
         m4 = new JMenuItem("Black and White");
         m5 = new JMenuItem("RGB matrix");
         m6 = new JMenuItem("Histogram");
         m7 = new JMenuItem("Change pixels");
         m8 = new JMenuItem("2 photografies");
-        m9 = new JMenuItem("Whitest");
+        m9 = new JMenuItem("Whitest and Darkest");
 
         // add menu items to menu
         x.add(m1);
@@ -222,8 +225,7 @@ public class Main extends JFrame implements ActionListener {
             lbl = new JLabel();
             lbl.setIcon(icon);
             frame.add(lbl);
-            frame.setVisible(true);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            SwingUtilities.updateComponentTreeUI(frame);
 
         } else if (s.equals("Crop")) {
 
@@ -280,7 +282,7 @@ public class Main extends JFrame implements ActionListener {
 
             newframe.setVisible(true);
 
-        } else if (s.equals("Brightnes and contrast")) {
+        } else if (s.equals("Brightness and contrast")) {
 
             RescaleOp rescaleOp = new RescaleOp(1.2f, 15, null);
 
@@ -389,6 +391,7 @@ public class Main extends JFrame implements ActionListener {
             container.add(label);
 
             newframe.setVisible(true);
+
         }else if (s.equals("2 photografies")){
             
             BufferedImage image = null;
@@ -419,29 +422,67 @@ public class Main extends JFrame implements ActionListener {
             g.dispose();
             label.repaint();
 
-        } else if (s.equals("Whitest")){
+        } else if (s.equals("Whitest and Darkest")) {
 
-            JFrame newframe = new JFrame();
-            JLabel label = new JLabel();
-            newframe.setLayout(new FlowLayout());
-            Toolkit tk = Toolkit.getDefaultToolkit();
-            Dimension screenSize = tk.getScreenSize();
-            newframe.setSize(screenSize.width, screenSize.height);
-            newframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            Color black = new Color(0x80000000, true);
+            Color white = new Color(0x80ffffff, true);
 
-            BufferedImage whitest = new BufferedImage(
-                    originalImg.getWidth(),
-                    originalImg.getHeight(),
-                    BufferedImage.TYPE_BYTE_BINARY);
+            BufferedImage SubImg
+                    = originalImg.getSubimage(600 , 40, 200, 200);
 
-            Graphics2D graphics = whitest.createGraphics();
-            graphics.drawImage(originalImg, 0, 0, null);
 
-            ImageIcon icon = new ImageIcon(whitest);
-            label.setIcon(icon);
-            newframe.add(label);
-            newframe.setVisible(true);
+            int[][] R = new int[SubImg.getWidth()][SubImg.getHeight()];
+            int[][] G = new int[SubImg.getWidth()][SubImg.getHeight()];
+            int[][] B = new int[SubImg.getWidth()][SubImg.getHeight()];
+
+            for (int r = 0; r < SubImg.getWidth(); r++) {
+                System.out.println("  [R  G  B] ");
+
+                for (int c = 0; c < SubImg.getHeight(); c++) {
+                    //Uses the Java color class to do the conversion from int to RGB
+                    Color temp = new Color(SubImg.getRGB(r, c));
+                    R[r][c] = temp.getRed();
+                    G[r][c] = temp.getGreen();
+                    B[r][c] = temp.getBlue();
+
+                    double Rdouble =R[r][c];
+                    double Gdouble =G[r][c];
+                    double Bdouble =B[r][c];
+
+                    double  Rcolor =  Rdouble /255;
+                    double  Gcolor =  Gdouble /255;
+                    double  Bcolor =  Bdouble /255;
+
+                    double  sum = (Rcolor + Gcolor + Bcolor) / 3;
+
+                    System.out.println("[ " + R[r][c] + " " + G[r][c] + " " + B[r][c] + " ]");
+                    System.out.println("White balance: " +sum);
+
+                    if (sum > 0.5) {
+                        //je svetle
+                        SubImg.setRGB(r, c, white.getRGB());
+                        ImageIcon icon = new ImageIcon(originalImg);
+                        lbl.setIcon(icon);
+                        frame.add(lbl);
+                        SwingUtilities.updateComponentTreeUI(frame);
+
+                    } else {
+                        //je tmave
+                        SubImg.setRGB(r, c, black.getRGB());
+                        ImageIcon icon = new ImageIcon(originalImg);
+                        lbl.setIcon(icon);
+                        frame.add(lbl);
+                        SwingUtilities.updateComponentTreeUI(frame);
+                    }
+
+                }
+                System.out.println("-----------------------");
+                SwingUtilities.updateComponentTreeUI(frame);
+            }
+
+
         }
+
     }
 
 
